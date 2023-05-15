@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Сотрудники</h1>
+
+{% if employee_list %}
+<table class="table mt-5">
+    <thead>
+    <tr>
+        <th scope="col">Табельный номер</th>
+        <th scope="col">Фамилия</th>
+        <th scope="col">Имя</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for employee in employee_list %}
+    <tr>
+        <td><a href="{% url 'timesheets' employee.id %}">{{ employee.number }}</a></td>
+        <td>{{ employee.last_name }}</td>
+        <td>{{ employee.first_name }}</td>
+    </tr>
+    {% endfor %}
+
+    <tbody>
+</table>
+
+{% else %}
+
+<div class="alert alert-primary" role="alert">
+    В системе нет информации о сотрудниках!
+</div>
+
+{% endif %}
+
+{% endblock %}

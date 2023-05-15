@@ -1,0 +1,85 @@
+{% extends "base_generic.html" %}
+{% block content %}
+<h1>Табель</h1>
+
+<div class="row">
+
+    <div class="col col-sm-6">
+        <table class="table">
+            <tr>
+                <th>Сотрудник</th>
+                <td>{{ timesheet.employee.last_name }} {{ timesheet.employee.first_name }}</td>
+            </tr>
+            <tr>
+                <th>Табельный номер</th>
+                <td>{{ timesheet.employee.number }}</td>
+            </tr>
+            <tr>
+                <th>Период</th>
+                <td>{{ timesheet.month|date:"F" }} {{ timesheet.month|date:"Y" }}</td>
+            </tr>
+            <tr>
+                <th>Статус</th>
+                <td>{{ timesheet.get_status_display }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col col-sm-3">
+        <form action="{% url 'timesheet_status_change' timesheet.id %}" method="post">
+            {{ form_status }}
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Изменить статус</button>
+        </form>
+    </div>
+
+    {% if timesheet.status == "DRAFT" %}
+    <div class="col col-sm-3">
+        <form action="{% url 'timesheet_entry_add' timesheet.id %}" method="post">
+            {{ form }}
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Добавить запись</button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    <div class="col">
+        {% if timesheet_entries_list_by_day %}
+        <table class="table mt-5 table-sm">
+            <thead>
+            <tr>
+                <th scope="col">День</th>
+                <th scope="col">День недели</th>
+                <th scope="col">Количество часов</th>
+                <th scope="col">Активность</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for item in timesheet_entries_list_by_day %}
+            <tr>
+                <td>{{ item.day|date:"d" }}</td>
+                <td>{{ item.day|date:"D" }}</td>
+                <td>{{ item.total }}</td>
+                <td>
+                    {% if item.entries %}
+                    <ul>
+                        {% for entry in item.entries %}
+                        <li>{{ entry.activity }}: {{ entry.quantity }} час.</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+            <tbody>
+        </table>
+        {% else %}
+        <p>В системе нет информации записях в табеле.</p>
+        {% endif %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col col-sm-6">
+        <table class="table">
+            <tr>
+                <th>Сотрудник</th>
+                <td>{{ employee.last_name }} {{ employee.first_name }}</td>
+            </tr>
+            <tr>
+                <th>Табельный номер</th>
+                <td>{{ employee.number }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col col-sm-3">
+   <a class="btn btn-primary btn-lg active" role="button" aria-pressed="true" href="{% url 'timesheets_add' employee.id %}">Создать следующий табель</a>
+    </div>
+    <div class="col col-sm-3">
+
+    </div>
+</div>
+
+<h1>Табели</h1>
+{% if timesheet_list %}
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">Год</th>
+        <th scope="col">Месяц</th>
+        <th scope="col">Отработано часов</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for timesheet in timesheet_list %}
+    <tr>
+        <td>{{ timesheet.month|date:"Y" }}</td>
+        <td>{{ timesheet.month|date:"F" }}</td>
+        <td><a href="{% url 'timesheet' timesheet.id %}">{{ timesheet.get_total }}</a></td>
+    </tr>
+    {% endfor %}
+    <tbody>
+</table>
+
+{% else %}
+
+<div class="alert alert-primary" role="alert">
+    В системе нет информации о табелях сотрудника!
+</div>
+
+{% endif %}
+
+{% endblock %}
